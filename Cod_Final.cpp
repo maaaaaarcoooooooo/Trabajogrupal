@@ -5,43 +5,45 @@ using namespace std;
 
 // ==== Estructura de un proceso ====
 struct Proceso {
-    int id;
-    string nombre;
-    int prioridad;
-    Proceso* siguiente;
+    int id;                 
+    string nombre;           
+    int prioridad;           
+    Proceso* siguiente;      
 };
 
-// ==== Lista de procesos ====
+// ==== Lista de procesos (lista enlazada) ====
 struct Lista {
-    Proceso* inicio;
-    Proceso* fin;
-    int siguienteID;
+    Proceso* inicio;         
+    Proceso* fin;            
+    int siguienteID;         
 };
 
-// ==== Cola FIFO ====
+// ==== Nodo para la cola  ====
 struct NodoCola {
-    Proceso* proceso;
-    NodoCola* siguiente;
+    Proceso* proceso;        
+    NodoCola* siguiente;   
 };
 
+// ==== Cola  de procesos ====
 struct Cola {
-    NodoCola* frente;
-    NodoCola* final;
+    NodoCola* frente;        
+    NodoCola* final;         
 };
 
-// ==== Pila LIFO ====
+// ==== Nodo para la pila ====
 struct NodoPila {
-    int idProceso;
-    NodoPila* siguiente;
+    int idProceso;           
+    NodoPila* siguiente;     
 };
 
-// ==== Funciones Lista ====
+// ==== Funciones para Lista de procesos ====
 void inicializarLista(Lista& lista) {
     lista.inicio = nullptr;
     lista.fin = nullptr;
     lista.siguienteID = 1;
 }
 
+// Crear y agregar un nuevo proceso a la lista
 Proceso* crearProceso(Lista& lista, string nombre, int prioridad) {
     Proceso* nuevo = new Proceso{ lista.siguienteID++, nombre, prioridad, nullptr };
     if (!lista.inicio)
@@ -54,6 +56,7 @@ Proceso* crearProceso(Lista& lista, string nombre, int prioridad) {
     return nuevo;
 }
 
+// Buscar un proceso por ID
 Proceso* buscarProceso(Lista& lista, int id) {
     Proceso* actual = lista.inicio;
     while (actual) {
@@ -63,6 +66,7 @@ Proceso* buscarProceso(Lista& lista, int id) {
     return nullptr;
 }
 
+// Eliminar un proceso por ID
 bool eliminarProceso(Lista& lista, int id) {
     Proceso* actual = lista.inicio;
     Proceso* anterior = nullptr;
@@ -83,6 +87,7 @@ bool eliminarProceso(Lista& lista, int id) {
     return false;
 }
 
+// Mostrar todos los procesos registrados
 void mostrarLista(Lista& lista) {
     Proceso* actual = lista.inicio;
     cout << "\nProcesos registrados:\n";
@@ -92,11 +97,12 @@ void mostrarLista(Lista& lista) {
     }
 }
 
-// ==== Cola ====
+// ==== Funciones para Cola ====
 void inicializarCola(Cola& cola) {
     cola.frente = cola.final = nullptr;
 }
 
+// Encolar un proceso
 void encolar(Cola& cola, Proceso* p) {
     NodoCola* nuevo = new NodoCola{ p, nullptr };
     if (!cola.frente) cola.frente = cola.final = nuevo;
@@ -106,6 +112,7 @@ void encolar(Cola& cola, Proceso* p) {
     }
 }
 
+// Desencolar el proceso del frente
 Proceso* desencolar(Cola& cola) {
     if (!cola.frente) return nullptr;
     NodoCola* temp = cola.frente;
@@ -116,11 +123,12 @@ Proceso* desencolar(Cola& cola) {
     return p;
 }
 
+// Verificar si la cola esta vacia
 bool colaVacia(Cola& cola) {
     return cola.frente == nullptr;
 }
 
-// ==== Pila ====
+// ==== Funciones para Pila ====
 void push(NodoPila*& cima, int idProceso) {
     NodoPila* nuevo = new NodoPila{ idProceso, cima };
     cima = nuevo;
@@ -139,6 +147,7 @@ bool pilaVacia(NodoPila* cima) {
     return cima == nullptr;
 }
 
+// Mostrar la pila de procesos en memoria
 void mostrarPila(NodoPila* cima) {
     cout << "\nMemoria (Pila):\n";
     while (cima) {
@@ -147,7 +156,7 @@ void mostrarPila(NodoPila* cima) {
     }
 }
 
-// ==== MAIN ====
+// ==== Funcion principal (main) ====
 int main() {
     Lista lista;
     Cola cola;
@@ -158,6 +167,7 @@ int main() {
 
     int opcion;
     do {
+        // Menu de opciones para el usuario
         cout << "\n=== GESTION DE PROCESOS ===\n";
         cout << "1. Crear Proceso\n";
         cout << "2. Eliminar Proceso\n";
@@ -173,6 +183,7 @@ int main() {
         cin >> opcion;
 
         if (opcion == 1) {
+            // Crear un nuevo proceso
             string nombre;
             int prioridad;
             cout << "Nombre del proceso: ";
@@ -182,6 +193,7 @@ int main() {
             crearProceso(lista, nombre, prioridad);
         }
         else if (opcion == 2) {
+            // Eliminar un proceso
             int id;
             cout << "ID del proceso a eliminar: ";
             cin >> id;
@@ -191,6 +203,7 @@ int main() {
                 cout << "Proceso no encontrado.\n";
         }
         else if (opcion == 3) {
+            // Buscar un proceso por ID
             int id;
             cout << "ID del proceso a buscar: ";
             cin >> id;
@@ -201,6 +214,7 @@ int main() {
                 cout << "Proceso no encontrado.\n";
         }
         else if (opcion == 4) {
+            // Cambiar la prioridad de un proceso
             int id, nuevaPrioridad;
             cout << "ID del proceso: ";
             cin >> id;
@@ -215,6 +229,7 @@ int main() {
             }
         }
         else if (opcion == 5) {
+            // Asignar proceso a la pila de memoria
             int id;
             cout << "ID del proceso a cargar en memoria: ";
             cin >> id;
@@ -227,6 +242,7 @@ int main() {
             }
         }
         else if (opcion == 6) {
+            // Liberar el ultimo proceso en memoria (pop)
             int id = pop(pila);
             if (id != -1)
                 cout << "Proceso ID " << id << " liberado de la memoria.\n";
@@ -234,9 +250,11 @@ int main() {
                 cout << "Memoria vacia.\n";
         }
         else if (opcion == 7) {
+            // Mostrar todos los procesos registrados
             mostrarLista(lista);
         }
         else if (opcion == 8) {
+            // Ejecutar todos los procesos en la lista
             Proceso* actual = lista.inicio;
             while (actual) {
                 encolar(cola, actual);
@@ -255,11 +273,12 @@ int main() {
                     int id = pop(pila);
                     cout << "Memoria liberada para proceso " << id << endl;
                 } else {
-                    encolar(cola, p);
+                    encolar(cola, p);  // Reencolar si no termino
                 }
             }
         }
         else if (opcion == 9) {
+            // Mostrar la pila de memoria actual
             mostrarPila(pila);
         }
 
