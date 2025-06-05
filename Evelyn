@@ -1,0 +1,42 @@
+#include <iostream>
+using namespace std;
+
+struct Proceso; // Declaración anticipada
+
+struct NodoCola {
+    Proceso* proceso;
+    NodoCola* siguiente;
+};
+
+struct Cola {
+    NodoCola* frente;
+    NodoCola* final;
+};
+
+void inicializarCola(Cola& cola) {
+    cola.frente = cola.final = nullptr;
+}
+
+void encolar(Cola& cola, Proceso* p) {
+    NodoCola* nuevo = new NodoCola{ p, nullptr };
+    if (!cola.frente)
+        cola.frente = cola.final = nuevo;
+    else {
+        cola.final->siguiente = nuevo;
+        cola.final = nuevo;
+    }
+}
+
+Proceso* desencolar(Cola& cola) {
+    if (!cola.frente) return nullptr;
+    NodoCola* temp = cola.frente;
+    Proceso* p = temp->proceso;
+    cola.frente = cola.frente->siguiente;
+    if (!cola.frente) cola.final = nullptr;
+    delete temp;
+    return p;
+}
+
+bool colaVacia(Cola& cola) {
+    return cola.frente == nullptr;
+}
